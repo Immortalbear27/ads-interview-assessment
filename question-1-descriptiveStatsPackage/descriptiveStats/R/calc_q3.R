@@ -22,7 +22,7 @@ calc_q3 <- function(x, na.rm = FALSE){
   validate_numeric(x)
   
   # If missing values are detected, then remove them from the input:
-  handle_na(x)
+  x <- handle_na(x, na.rm)
   
   # Checks to see if input, after missing values are handled, is reduced to 
   # length of 0. If so, then exit function prematurely with NA value.
@@ -31,5 +31,5 @@ calc_q3 <- function(x, na.rm = FALSE){
   }
   
   # Logic handling third quartile calculation:
-  as.numeric(quantile(x, 0.75, names = FALSE))
+  as.numeric(quantile(x, 0.75, names = FALSE, na.rm = na.rm))
 }

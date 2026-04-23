@@ -10,6 +10,8 @@
 #' @details
 #' This function is a helper function that handles the management of NA values in the input.
 handle_na <- function(x, na.rm){
-  if (na.rm) x <- x[!is.na(x)]
-  x
+  if (na.rm) {
+    x <- x[!is.na(x)]
+  }
+  as.numeric(x)
 }
