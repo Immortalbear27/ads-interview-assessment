@@ -27,15 +27,35 @@ library(descriptiveStats)
 
 ## Functions
 #### calc_mean()
+Computes the mean of a numeric vector:
 ```r
 # Inline code usage:
 calc_mean(x, na.rm = FALSE)
-```
 
-Computes the mean of a numeric vector:
-```r
-# Examples:
+# Example Inputs:
 calc_mean(c(1, 2, 3, 4))
 calc_mean(c(1, NA, 3), na.rm = TRUE)
+```
+
+#### calc_median()
+Computes the median value:
+```r
+# Inline code usage:
+calc_median(x, na.rm = FALSE)
+
+# Example Inputs:
+calc_median(c(1, 2, 3, 4))
+calc_median(c(1, NA, 3), na.rm = TRUE)
+```
+
+#### calc_mode()
+Returns the most frequent value/s in a numeric vector:
+```r
+# Inline code usage:
+calc_mode(x, na.rm = FALSE)
+
+# Example Inputs:
+calc_mode(c(1, 2, 3, 4)
+calc_mode(c(1, NA, 3), na.rm = TRUE)
 ```
 
