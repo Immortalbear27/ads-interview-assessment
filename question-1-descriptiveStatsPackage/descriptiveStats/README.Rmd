@@ -1,0 +1,38 @@
+---
+title: "descriptiveStats"
+output: html_document
+---
+
+# descriptiveStats
+
+A lightweight R package providing reproducible, audit-friendly descriptive statistical summaries for structured datasets. Designed for regulated analytical environments where traceability, consistency, and deterministic outputs are required.
+
+---
+
+# Overview
+
+The `descriptiveStats` package standardises descriptive statistical reporting across datasets. It ensures consistent handling of missing values, grouped summaries, and percentile-based analysis.
+
+It is designed primarily for:
+- Clinical trial datasets (e.g. SDTM-aligned structures)
+- Regulatory reporting pipelines
+- Structured exploratory data analysis workflows
+
+## Design Principles
+
+- Deterministic outputs (no stochastic behaviour)
+- Explicit handling of missing values
+- Reproducible grouped summaries
+- Minimal dependency footprint
+- Audit-friendly and traceable outputs
+
+---
+
+# Installation
+
+```r
+# Install from local source
+devtools::install_local("descriptiveStats")
+
+# Install from GitHub (if hosted)
+devtools::install_github("your-org/descriptiveStats")
