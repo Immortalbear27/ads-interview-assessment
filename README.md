@@ -140,8 +140,22 @@ FDA-style summary of Treatment-Emergent Adverse Events
 - Ranked by frequency (`AETERM`)
 - Includes 95% confidence intervals for incidence rates
 
-### Plot 3:
-FILL IN THIS INFORMATION AFTERWARDS
+### Plot 3: AE Listing
+A detailed subject-level listing of Treatment-Emergent Adverse Events
+Features:
+- Filtered for TEAEs (`TRTEMFL == "Y"`)
+- Includes:
+  - Subject ID (`USUBJID`)
+  - Treatment Arm (`ACTARM`)
+  - AE Term (`AETERM`)
+  - Severity (`AESEV`)
+  - Relationship to Drug (`AEREL`)
+  - Start/End Dates (`ASTDT`, `AENDT`)
+ 
+### Design Considerations
+- Sorted by subject and event start date for chronological traceability
+- Dates handled using `admiral` utilities to ensure consistency with clinical standards
+- Output formatted using `gt` to approximate regulatory-style listings, mimicing SAS-like output
 
 ### Output
 - Visualisation 1: `ae_summary_table.html`
