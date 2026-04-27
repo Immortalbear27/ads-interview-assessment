@@ -17,7 +17,7 @@ ds_raw <- pharmaverseraw::ds_raw
 dm <- pharmaversesdtm::dm
 
 # Read in the Controlled Terminology:
-study_ct <- read.csv("~/R/R Projects/ads-interview-assessment/question-2-SDTM-DS-Creation/sdtm_ct.csv")
+study_ct <- read.csv("./question-2-SDTM-DS-Creation/sdtm_ct.csv")
 
 
 # Derivation of Variables -------------------------------------------------
@@ -26,6 +26,8 @@ study_ct <- read.csv("~/R/R Projects/ads-interview-assessment/question-2-SDTM-DS
 ds_raw <- ds_raw %>% generate_oak_id_vars(
   pat_var = "PATNUM",
   raw_src = "ds_raw"
+) %>% mutate(
+  DSDECOD = IT.DSDECOD
 )
 
 # Derive topic variable - DSTERM:
@@ -35,6 +37,27 @@ ds <- assign_no_ct(
   tgt_var = "DSTERM",
   id_vars = oak_id_vars()
 )
+
+# Carry through required raw variables for later derivations
+ds <- ds %>%
+  assign_no_ct(
+    raw_dat = ds_raw,
+    raw_var = "IT.DSDECOD",
+    tgt_var = "DSDECOD",
+    id_vars = oak_id_vars()
+  ) %>%
+  assign_no_ct(
+    raw_dat = ds_raw,
+    raw_var = "OTHERSP",
+    tgt_var = "OTHERSP",
+    id_vars = oak_id_vars()
+  ) %>%
+  assign_no_ct(
+    raw_dat = ds_raw,
+    raw_var = "STUDY",
+    tgt_var = "STUDYID",
+    id_vars = oak_id_vars()
+  )
 
 # Derive DSDTC, DSSTDTC:
 ds <- ds %>% assign_datetime(
@@ -52,12 +75,13 @@ ds <- ds %>% assign_datetime(
   id_vars = oak_id_vars()
 )
 
-# Derive DSCAT using OTHERSP & IT.DSDECOD:
-ds <- ds %>% mutate(DSCAT = case_when(
-  ds_raw$IT.DSDECOD == "Randomized" ~ "PROTOCOL MILESTONE",
-  !is.na(ds_raw$OTHERSP) ~ "OTHER EVENT",
-  TRUE ~ "DISPOSITION EVENT"
-))
+# Derive DSCAT using OTHERSP & DSDECOD:
+ds <- ds %>%
+  mutate(DSCAT = case_when(
+    DSDECOD == "Randomized" ~ "PROTOCOL MILESTONE",
+    !is.na(OTHERSP) ~ "OTHER EVENT",
+    TRUE ~ "DISPOSITION EVENT"
+  ))
 
 # Derive VISIT & VISITNUM:
 ds <- ds %>% assign_ct(
@@ -89,11 +113,11 @@ ds <- ds %>%
   dplyr::mutate(
     STUDYID = ds_raw$STUDY,
     DOMAIN = "DS",
-    USUBJID = paste0("01-", ds_raw$patient_number),
+    USUBJID = paste0(STUDYID, patient_number, sep = "-"),
     DSDECOD = ds_raw$IT.DSDECOD
   ) %>% derive_seq(
     tgt_var = "DSSEQ",
-    rec_vars = c("USUBJID", "DSTERM")
+    rec_vars = c("USUBJID")
   ) %>% derive_study_day(
     sdtm_in = .,
     dm_domain = dm,
