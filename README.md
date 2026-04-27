@@ -1,8 +1,10 @@
 # ADS Assessment: Clinical Trial Data Engineering & AI
 My personal submission for the ADS position within Roche Products Ltd, as per the requirements from the DSX Assessment document.
 
-# Ovewrview
-This repository contains an end-to-end solution a clinical data engineering assessment, covering:
+# Overview
+This repository presents an end-to-end solution to a clinical data engineering assessment, covering statistical programming, SDTM/ADaM transformations, safety reporting, API development, and applied generative AI.
+
+This implementation focuses on:
 - Statistical package development in R
 - SDTM -> ADSL derivations using open source packages such as Pharmaverse/Admiral
 - RESTful API design for clinical data access
@@ -88,28 +90,28 @@ A structured R package implementing core statistical functions with full documen
 
 ### Engineering Approach
 - Centralised validation (`validate_numeric`) to enforce input
-- Consistent NA handling via helper function (`handle_na`) via abstraction
+- Consistent NA handling via a dedicated helper function (`handle_na`)
 - Explicit handling of edge cases (empty vectors, all-NA inputs)
-- Clean numeric outputs (`calc_q1/q3(..., names = FALSE)`)
+- Clean numeric outputs
 
 ### Testing
 - Built using `testthat`
-- Covers correctnes, edge cases and functional relationships e.g. IQR consistency
+- Covers correctness, edge cases and functional relationships e.g. IQR consistency
 
 ### How to Run
 Use the following commands, in the order they appear:
 ```
 devtools::document()
-deevtools::load_all()
+devtools::load_all()
 testthat::test_dir("tests/testthat")
 ```
 
-## ADSL Derivations (Pharmaverse/Admiral)
+## ADSL Construction & Derivations (Pharmaverse/Admiral)
 Construction of an analysis-ready ADSL dataset from SDTM sources.
 
 ### Key Derivations
 - AGEGR9/AGEGR9N - Age Categorisation
-- TRTSDTM/TRTEDTM - Treatement exposure windows
+- TRTSDTM/TRTEDTM - Treatment exposure windows
 - ITTFL - Intent-to-treat population
 - ABNSBPFL - Abnormal systolic blood pressure flag
 - LSTALVDT - Last known alive date (Calculated through multi-source derivations)
@@ -126,7 +128,7 @@ This design flow and approach is an attempt at mirroring production patterns in 
 FDA-style summary of Treatment-Emergent Adverse Events
 
 ### Implementation
-- Dataset: `pharmaverseadam::adam`
+- Dataset: `pharmaverseadam::adae`
 - Filter: `TRTEMFL == "Y"`
 - Hierarchy: `AESOC -> AETERM`
 - Columns: Treatment arms (`ACTARM`)
@@ -139,7 +141,7 @@ FDA-style summary of Treatment-Emergent Adverse Events
 ## Visualisations
 ### Plot 1: AE Severity Distribution
 - Severity (AESEV) by treatment arm
-- Designed for qick comparative assessment of safety profiles
+- Displays subject-level AE severity distribution by treatment arm
 
 ### Plot 2: Top 10 Adverse Events
 - Ranked by frequency (`AETERM`)
@@ -160,15 +162,15 @@ Features:
 ### Design Considerations
 - Sorted by subject and event start date for chronological traceability
 - Dates handled using `admiral` utilities to ensure consistency with clinical standards
-- Output formatted using `gt` to approximate regulatory-style listings, mimicing SAS-like output
+- Output formatted using `gt` to approximate regulatory-style listings, mimicking SAS-like output
 
 ### Output
 - Visualisation 1: `ae_summary_table.html`
-- Visualisation 2: `ae_severity_plot.png` & `ae_severity_plot_2.png`
+- Visualisation 2: `ae_severity_distribution.png` & `top10_ae_ci_plot.png`
 - Visualisation 3: `ae_listing.html`
 
 ## RESTful API (Using FastAPI)
-Expose clinical data through a programmatic interface supporting filtering and derived metrics
+Provides programmatic access to AE data with dynamic filtering and derived risk scoring.
 
 ### Endpoints
 #### GET /
@@ -206,7 +208,7 @@ If Structured JSON fails, then it navigates to a fallback routine.
 - Schema-driven prompt defines mapping space (`AESEV, AETERM, AESOC`)
 
 #### Key Challenge
-Lightweight models are not reliable for structured extraction, due to lack of hyperparameters
+Lightweight local models are not fully reliable for structured extraction tasks
 
 ### Solution: Hybrid Parsing Strategy
 1. Attempt LLM-based parsing
@@ -220,7 +222,7 @@ This ensures:
 
 ### Execution Logic
 - Case-insensitive filtering
-- Uses partial matching (`str.contains`) to reflect real-world clincal data
+- Uses partial matching (`str.contains`) to reflect real-world clinical data
   - e.g. `"HEADACHE"` correctly matches `"HEADACHE NOS"`
 
 ### Example Queries
@@ -243,13 +245,9 @@ Once navigated to the local directory, use this command:
 - Clinical data pipelines require strict validation and controlled transformations
 - Aggregation strategy is critical to avoid corrupting subject-level datasets
 - LLM-based systems must be defensive and validated, not blindly trusted
-- Reproduciblity and traceability are essential in regulated environments
+- Reproducibility and traceability are essential in regulated environments
 
 # Summary
-This repository aims to demonstrate the integration of:
-- Statistical programming (R)
-- Clinical data standards (SDTM/ADaM)
-- Backend/API engineering
-- Applied Generative AI
+This project demonstrates the integration of statistical programming, clinical data standards, backend engineering, and applied AI within a single workflow.
 
-The aim is to combine the above into a cohesive workflow aligned with real-world clinical data practices
+The solutions are designed to reflect real-world clinical data practices, where correctness, traceability, and robustness are critical.
