@@ -48,12 +48,18 @@ class ClinicalTrialDataAgent:
         """
 
         # Lightweight local model (no API required)
-        self.llm = pipeline("text-generation", model="distilgpt2")
+        self.llm = pipeline(
+            "text-generation",
+            model="distilgpt2",
+            pad_token_id=50256
+        )
 
         # Allowed columns (for validation)
         self.valid_columns = ["AESEV", "AETERM", "AESOC"]
 
     
+    # The local model may fail to produce valid structured JSON.
+    # fallback_parse() preserves the Prompt -> Parse -> Execute flow while ensuring stable execution.
     def fallback_parse(self, question: str) -> Dict:
         q = question.lower()
 
@@ -76,9 +82,10 @@ class ClinicalTrialDataAgent:
             val = "CARDIAC DISORDERS"
         elif "skin" in q:
             val = "SKIN DISORDERS"
+        elif "headache" in q:
+            val = "HEADACHE"
         else:
-            # crude extraction fallback
-            val = q.split()[-1].upper()
+            val = q.split()[-1].strip("?.!,").upper()
 
         return {
             "target_column": col,
@@ -128,7 +135,7 @@ class ClinicalTrialDataAgent:
         val = val.upper()
 
         # Apply filter
-        filtered = self.df[self.df[col].str.upper().str.contains(val, na=False)]
+        filtered = self.df[self.df[col].str.upper().str.contains(val, na=False, regex=False)]
 
         subjects = filtered["USUBJID"].dropna().unique().tolist()
 
