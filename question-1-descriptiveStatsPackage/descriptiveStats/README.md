@@ -55,7 +55,7 @@ Returns the most frequent value/s in a numeric vector:
 calc_mode(x, na.rm = FALSE)
 
 # Example Inputs:
-calc_mode(c(1, 2, 3, 4)
+calc_mode(c(1, 2, 3, 4))
 calc_mode(c(1, NA, 3), na.rm = TRUE)
 ```
 
@@ -89,7 +89,7 @@ calc_iqr(x, na.rm = FALSE)
 
 # Example Inputs:
 calc_iqr(c(1, 2, 3, 4))
-calc_iqr(1, NA, 4), na.rm = TRUE)
+calc_iqr(c(1, NA, 4), na.rm = TRUE)
 ```
 
 ## Input Validation
