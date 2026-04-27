@@ -14,7 +14,11 @@ adae["ACTARM"] = adae["ACTARM"].str.upper()
 # -------------------------------
 # FastAPI App
 # -------------------------------
-app = FastAPI()
+app = FastAPI(
+    title="Clinical Trial Data API",
+    description="API for querying adverse event data and calculating subject safety risk scores.",
+    version="1.0.0"
+)
 
 # -------------------------------
 # Request Model for Filtering
@@ -61,7 +65,7 @@ def ae_query(query: AEQuery):
 @app.get("/subject-risk/{subject_id}")
 def subject_risk(subject_id: str):
 
-    df = adae[adae["USUBJID"] == subject_id]
+    df = adae[adae["USUBJID"].str.upper() == subject_id.upper()]
 
     if df.empty:
         raise HTTPException(status_code=404, detail="Subject not found")
