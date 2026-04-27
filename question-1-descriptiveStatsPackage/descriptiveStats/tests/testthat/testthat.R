@@ -62,6 +62,11 @@ test_that("calc_q1 handles NA correctly", {
   expect_equal(calc_q1(c(1, NA, 3, 4), na.rm = TRUE), 2, tolerance = 1e-8)
 })
 
+test_that("calc_q1 returns NA after all values removed", {
+  expect_true(is.na(calc_q1(c(NA_real_, NA_real_), na.rm = TRUE)))
+})
+
+
 # Calc_q3 Tests -----------------------------------------------------------
 test_that("calc_q3 computes correct third quartile", {
   expect_equal(calc_q3(c(1, 2, 3, 4)), 3.25)
@@ -69,6 +74,10 @@ test_that("calc_q3 computes correct third quartile", {
 
 test_that("calc_q3 handles NA correctly", {
   expect_equal(calc_q3(c(1, NA, 3, 4), na.rm = TRUE), 3.5)
+})
+
+test_that("calc_q3 returns NA after all values removed", {
+  expect_true(is.na(calc_q3(c(NA_real_, NA_real_), na.rm = TRUE)))
 })
 
 
@@ -87,3 +96,6 @@ test_that("calc_iqr handles NA correctly", {
   expect_equal(calc_iqr(c(1, NA, 3, 4), na.rm = TRUE), 1.5)
 })
 
+test_that("calc_iqr returns NA after all values removed", {
+  expect_true(is.na(calc_iqr(c(NA_real_, NA_real_), na.rm = TRUE)))
+})

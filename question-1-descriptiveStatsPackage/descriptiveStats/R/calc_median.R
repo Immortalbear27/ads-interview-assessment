@@ -8,7 +8,7 @@
 #' @return A single numeric value representing the median of the input vector.
 #' 
 #' @details
-#' This function is a wrapper around base R's mean function, with additional
+#' This function is a wrapper around base R's median function, with additional
 #' input validation for increased robustness.
 #' 
 #' @examples
