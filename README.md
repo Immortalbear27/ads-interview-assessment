@@ -12,11 +12,14 @@ The implementation emphasises robustness, reproducibility and defensible design 
 
 ## Repository Structure
 ```
+C:.
+│   ads-interview-assessment.Rproj
+│   ae_severity_distribution.png
+│   README.md
+│   README.Rmd
+│   
 ├───question-1-descriptiveStatsPackage
 │   └───descriptiveStats
-│       │   .gitignore
-│       │   .Rbuildignore
-│       │   .Rhistory
 │       │   DESCRIPTION
 │       │   descriptiveStats.Rproj
 │       │   NAMESPACE
@@ -55,17 +58,19 @@ The implementation emphasises robustness, reproducibility and defensible design 
 │       create_adsl.R
 │       
 ├───question-4-TLG-adverse-events
-│       01_create_ae_summary.R
-│       02_create_visualisations.R
-│       03_create_listings.R
-│       ae_listing.html
-│       ae_severity_plot.png
-│       ae_severity_plot_2.png
-│       ae_summary_table.html
-│       
+│   │   01_create_ae_summary.R
+│   │   02_create_visualisations.R
+│   │   03_create_listings.R
+│   │   
+│   └───outputs
+│           ae_listing.html
+│           ae_severity_distribution.png
+│           ae_summary_table.html
+│           top10_ae_ci_plot.png
+│           
 ├───question-5-clinical-data-API
-│   │   adae.csv
-│   │   API_file.py
+│       adae.csv
+│       API_file.py
 │           
 └───question-6-GenAI-Assistant
         adae.csv
