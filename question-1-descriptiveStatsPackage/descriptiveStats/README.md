@@ -55,7 +55,7 @@ Returns the most frequent value/s in a numeric vector:
 calc_mode(x, na.rm = FALSE)
 
 # Example Inputs:
-calc_mode(c(1, 2, 3, 4)
+calc_mode(c(1, 2, 3, 4))
 calc_mode(c(1, NA, 3), na.rm = TRUE)
 ```
 
@@ -89,7 +89,7 @@ calc_iqr(x, na.rm = FALSE)
 
 # Example Inputs:
 calc_iqr(c(1, 2, 3, 4))
-calc_iqr(1, NA, 4), na.rm = TRUE)
+calc_iqr(c(1, NA, 4), na.rm = TRUE)
 ```
 
 ## Input Validation
@@ -111,11 +111,6 @@ The package prioritises:
 Key internal helpers:
 - 'validate_numeric()' - Ensures valid numeric input
 - 'handle_na()' - Centralised 'NA' handling logic
-
-## Dependencies
-The package is intentionally lightweight and relies primarily on base R functions
-Optional dependency:
-- 'modeest' - Used for mode calculation via 'mfv' if used
 
 ## Example Workflow
 ```r
