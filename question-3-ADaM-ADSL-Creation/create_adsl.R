@@ -23,7 +23,7 @@ vs <- convert_blanks_to_na(vs)
 # Load the ADSL, and compute an aggregated version of VS suitable for merging:
 adsl <- dm %>% select(-DOMAIN)
 
-# Extra Note: ABNSBPFL is also derived as part of the VS aggregation:
+# ABNSBPFL is also derived as part of the VS aggregation:
 vs_flag <- vs %>%
   filter(VSTESTCD == "SYSBP", VSSTRESU == "mmHg") %>%
   group_by(USUBJID) %>%
@@ -32,11 +32,13 @@ vs_flag <- vs %>%
     .groups = "drop"
   )
 
+# Fill missing ABNSBPFL after merge:
 adsl <- derive_vars_merged(
   adsl,
   dataset_add = vs_flag,
   by_vars = exprs(USUBJID)
-)
+) %>%
+  mutate(ABNSBPFL = if_else(is.na(ABNSBPFL), "N", ABNSBPFL))
 
 # Deriving AGEGR9:
 
@@ -44,7 +46,6 @@ adsl <- adsl %>% mutate(AGEGR9 = case_when(
   AGE < 18 ~ "<18",
   AGE >= 18 & AGE <= 50 ~ "18 - 50",
   AGE > 50 ~ ">50",
-  TRUE ~ NA
 ))
 
 # Deriving AGEGR9N:
@@ -52,12 +53,11 @@ adsl <- adsl %>% mutate(AGEGR9 = case_when(
 adsl <- adsl %>% mutate(AGEGR9N = case_when(
   AGEGR9 == "<18" ~ 1,
   AGEGR9 == "18 - 50" ~ 2,
-  AGEGR9 == ">50" ~ 3
+  AGEGR9 == ">50" ~ 3,
 ))
 
-# Deriving TRTSDTM:
-# Impute start and end time of exposure to first and last respectively,
-# Do not impute date
+# Deriving TRTSDTM
+# Impute start and end time of exposure to first and last respectively, but not any dates:
 ex_ext <- ex %>%
   derive_vars_dtm(
     dtc = EXSTDTC,
@@ -74,7 +74,7 @@ adsl <- adsl %>%
     dataset_add = ex_ext,
     filter_add = (EXDOSE > 0 |
                     (EXDOSE == 0 &
-                       str_detect(EXTRT, "PLACEBO"))) & !is.na(EXSTDTM),
+                       str_detect(str_to_upper(EXTRT), "PLACEBO"))) & !is.na(EXSTDTM),
     new_vars = exprs(TRTSDTM = EXSTDTM, TRTSTMF = EXSTTMF),
     order = exprs(EXSTDTM, EXSEQ),
     mode = "first",
@@ -84,7 +84,7 @@ adsl <- adsl %>%
     dataset_add = ex_ext,
     filter_add = (EXDOSE > 0 |
                     (EXDOSE == 0 &
-                       str_detect(EXTRT, "PLACEBO"))) & !is.na(EXENDTM),
+                       str_detect(str_to_upper(EXTRT), "PLACEBO"))) & !is.na(EXENDTM),
     new_vars = exprs(TRTEDTM = EXENDTM, TRTETMF = EXENTMF),
     order = exprs(EXENDTM, EXSEQ),
     mode = "last",
@@ -92,10 +92,8 @@ adsl <- adsl %>%
   )
 
 # Deriving ITTFL:
-adsl <- adsl %>% mutate(ITTFL = case_when(
-  !is.na(ARM) ~ "Y",
-  TRUE ~ "N"
-))
+adsl <- adsl %>% 
+  mutate(ITTFL = if_else(!is.na(ARM), "Y", "N"))
 
 # Deriving LSTALVDT:
 
@@ -168,18 +166,11 @@ adsl <- adsl %>%
 # Deriving CARPOPFL:
 
 # Aggregate AE dataset, due to row difference to ADSL.
-# Also, derive CARPOPFL due to it only requiring AE information:
+# As well as above, derive CARPOPFL here due to it only requiring AE information:
 ae_flag <- ae %>%
-  mutate(AESOC_UP = toupper(AESOC)) %>%
-  group_by(USUBJID) %>%
-  summarise(
-    CARPOPFL = ifelse(
-      any(AESOC_UP == "CARDIAC DISORDERS", na.rm = TRUE),
-      "Y",
-      NA_character_
-    ),
-    .groups = "drop"
-  )
+  filter(toupper(AESOC) == "CARDIAC DISORDERS") %>%
+  distinct(USUBJID) %>%
+  mutate(CARPOPFL = "Y")
 
 # Merge the above aggregation into ADSL:
 adsl <- adsl %>%

@@ -1,9 +1,7 @@
 
 # Libraries ---------------------------------------------------------------
 library(dplyr)
-library(gtsummary)
 library(pharmaverseadam)
-library(admiral)
 library(gt)
 
 # Data Loading ------------------------------------------------------------
@@ -25,7 +23,7 @@ listing_data <- adae %>%
   ) %>%
   
   # Sort correctly
-  arrange(USUBJID, ASTDT)
+  arrange(USUBJID, ASTDT, AETERM)
 
 tbl <- listing_data %>%
   gt(groupname_col = "USUBJID") %>%
@@ -57,7 +55,7 @@ tbl <- tbl %>%
 tbl <- tbl %>%
   tab_header(
     title = md("**Listing of Treatment-Emergent Adverse Events by Subject**"),
-    subtitle = "Showing Adverse Events Balance"
+    subtitle = "Treatment-emergent adverse events sorted by subject and event start date"
   )
 
 tbl <- tbl %>%
@@ -69,4 +67,4 @@ tbl <- tbl %>%
 
 tbl
 
-gtsave(tbl, "ae_listing.html")
+gtsave(tbl, "./question-4-TLG-adverse-events/outputs/ae_listing.html")

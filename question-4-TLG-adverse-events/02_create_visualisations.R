@@ -8,11 +8,13 @@ library(binom)
 # Data Loading ------------------------------------------------------------
 
 adae <- pharmaverseadam::adae
+adsl <- pharmaverseadam::adsl
 
 # Plot 1 ------------------------------------------------------------------
 
 plot_data <- adae %>%
-  filter(TRTEMFL == "Y") %>%   # Ensure TEAEs only
+  filter(TRTEMFL == "Y") %>%
+  distinct(USUBJID, ACTARM, AESEV) %>%
   mutate(
     AESEV = factor(AESEV, levels = c("MILD", "MODERATE", "SEVERE"))
   )
@@ -20,7 +22,7 @@ plot_data <- adae %>%
 p <- ggplot(plot_data, aes(x = ACTARM, fill = AESEV)) +
   geom_bar(position = "stack") +
   labs(
-    title = "AE severity distribution by treatment",
+    title = "Distribution of Treatment-Emergent Adverse Event Severity by Treatment Arm",
     x = "Treatment Arm",
     y = "Count of AEs",
     fill = "Severity/Intensity"
@@ -28,7 +30,8 @@ p <- ggplot(plot_data, aes(x = ACTARM, fill = AESEV)) +
   theme_minimal()
 
 ggsave(
-  filename = "ae_severity_plot.png",
+  filename = "ae_severity_distribution.png",
+  path = "./question-4-TLG-adverse-events/outputs",
   plot = p,
   width = 8,
   height = 6,
@@ -36,6 +39,8 @@ ggsave(
 )
 
 # Plot 2 ------------------------------------------------------------------
+
+# Incidence calculated across total study population (not stratified by treatment arm)
 
 n_total <- n_distinct(adsl$USUBJID)
 
@@ -57,11 +62,7 @@ ci <- binom::binom.confint(
   methods = "exact"
 )
 
-ae_top10 <- ae_top10 %>%
-  mutate(
-    lower = ci$lower,
-    upper = ci$upper
-  )
+ae_top10 <- bind_cols(ae_top10, ci[, c("lower", "upper")])
 
 p <- ggplot(ae_top10, aes(
   x = prop * 100,
@@ -83,7 +84,8 @@ p <- ggplot(ae_top10, aes(
   theme_minimal()
 
 ggsave(
-  filename = "ae_severity_plot_2.png",
+  filename = "top10_ae_ci_plot.png",
+  path = "./question-4-TLG-adverse-events/outputs",
   plot = p,
   width = 8,
   height = 6,

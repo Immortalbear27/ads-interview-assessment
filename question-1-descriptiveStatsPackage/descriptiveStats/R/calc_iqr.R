@@ -19,6 +19,6 @@
 #'
 #' @export
 calc_iqr <- function(x, na.rm = FALSE){
-  # Logic handling interquartile range calculation, inlcuding edge case handling in used functions:
+  # Logic handling interquartile range calculation, including edge case handling in used functions:
   calc_q3(x, na.rm) - calc_q1(x, na.rm)
 }
