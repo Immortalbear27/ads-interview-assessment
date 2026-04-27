@@ -112,11 +112,6 @@ Key internal helpers:
 - 'validate_numeric()' - Ensures valid numeric input
 - 'handle_na()' - Centralised 'NA' handling logic
 
-## Dependencies
-The package is intentionally lightweight and relies primarily on base R functions
-Optional dependency:
-- 'modeest' - Used for mode calculation via 'mfv' if used
-
 ## Example Workflow
 ```r
 x <- c(1, 2, 3, NA)
